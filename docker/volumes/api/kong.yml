@@ -77,12 +77,12 @@ services:
       - name: key-auth
         config:
           hide_credentials: false
-      - name: acl
-        config:
-          hide_groups_header: true
-          allow:
-            - admin
-            - anon
+      # - name: acl
+      #   config:
+      #     hide_groups_header: true
+      #     allow:
+      #       - admin
+      #       - anon
 
   ## Secure REST routes
   - name: rest-v1
@@ -226,9 +226,9 @@ services:
             - admin
 
   ## Protected Dashboard - catch all remaining routes
-  - name: dashboard
+  - name: dashboard-platform
     _comment: 'Studio: /* -> http://studio:3000/*'
-    url: http://studio:3000/
+    url: http://192.168.1.114:3000/
     routes:
       - name: dashboard-all
         strip_path: true
@@ -236,6 +236,12 @@ services:
           - /
     plugins:
       - name: cors
-      - name: basic-auth
-        config:
-          hide_credentials: true
+  - name: platform
+    url: http://192.168.1.114:3000/api/platform
+    routes:
+      - name: dashboard-platform
+        strip_path: true
+        paths:
+          - /platform
+    plugins:
+      - name: cors

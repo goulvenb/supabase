@@ -21,6 +21,10 @@ const HOSTED_SUPPORTED_API_URLS = [
   '/get-utc-time',
   '/edge-functions/test',
   '/edge-functions/body',
+  // Platform API
+  '/platform/profile',
+  '/platform/projects',
+  '/platform/organizations',
 ]
 
 export function middleware(request: NextRequest) {

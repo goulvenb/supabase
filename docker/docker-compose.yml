@@ -388,6 +388,8 @@ services:
     container_name: supabase-db
     image: supabase/postgres:15.8.1.060
     restart: unless-stopped
+    ports:
+      - 15432:5432
     volumes:
       - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
       # Must be superuser to create event trigger
@@ -524,5 +526,15 @@ services:
         "/app/bin/migrate && /app/bin/supavisor eval \"$$(cat /etc/pooler/pooler.exs)\" && /app/bin/server"
       ]
 
+  init:
+    container_name: supabase-init
+    image: alpine:latest
+    depends_on:
+      auth:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - "apk update && apk add curl && curl 'http://auth:9999/admin/users' -H 'apikey: ${SERVICE_ROLE_KEY}' -H 'Authorization: Bearer ${SERVICE_ROLE_KEY}' -H 'Content-Type: application/json' -d '{\"email\":\"${DASHBOARD_EMAIL}\", \"password\":\"${DASHBOARD_PASSWORD}\", \"user_metadata\": {\"name\":\"${DASHBOARD_USERNAME}\"}, \"email_confirm\":true}'"
 volumes:
   db-config:
